@@ -1,0 +1,14 @@
+name: MikeyMinigames
+main: xyz.michaelzhao.mikeyminigames.MikeyMinigames
+version: 0.1.15
+author: Michael Zhao
+description: My first mc plugin!
+api-version: 1.15
+
+commands:
+  fun:
+    description: Fun little commands
+    usage: /fun <firework | gaystick>
+  games:
+    description: The minigame engine
+    usage: /games <commands>
