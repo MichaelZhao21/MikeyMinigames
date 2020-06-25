@@ -11,11 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-enum GameType {MULTIPLAYER, TEAM, GROUP, SINGLEPLAYER}
-
-enum DeathCondition {NONE, FALLING, HEALTH}
-
-enum WinCondition {NONE, LAST_ALIVE, LAST_TEAM_ALIVE, HIGHEST_SCORE, TIMER, ENDLESS, LAST_CHECKPOINT, LAST_ROUND}
+enum GameType {SPLEEF, BEDWARS, PARKOUR}
 
 enum GameState {LOBBY, RUNNING, STOPPED}
 
@@ -28,23 +24,23 @@ public class GameData {
     public GameState gameState;
 
     public BlockVector3 startPos1, startPos2, pos1, pos2;
-    public Location lobby, spectatorLoc, exitLoc;
+    public Location lobby, spectatorLoc, exitLoc, startLoc;
     public HashMap<String, Location> teamStartPositions;
     public ArrayList<Location> checkpoints;
+    public GameTimer timer;
 
-    public int timerId, timerCount, playersAlive;
     public HashMap<String, Integer> teamScores;
-
-    public HashMap<String, List<Player>> teamPlayerList;
-    public HashMap<String, int[]> playerScores;
-    public HashMap<String, int[]> playerOldScores;
-    public HashMap<String, Integer> playerLives;
     public HashMap<String, Integer> teamLives;
+    public HashMap<String, List<Player>> teamPlayerList;
 
-    public WinCondition winCondition;
-    public DeathCondition deathCondition;
+    public HashMap<String, long[]> playerScores;
+    public HashMap<String, long[]> playerOldScores;
+    public HashMap<String, Integer> playerLives;
+    public HashMap<String, long[]> playerTimes;
+    public int playersAlive;
 
     public File gameFolder;
+    public File playerFolder;
 
     public GameData(String name, GameType type) {
         this.gameType = type;
@@ -62,120 +58,45 @@ public class GameData {
         this.lobby = null;
         this.spectatorLoc = null;
         this.exitLoc = null;
+        this.startLoc = null;
         this.teamStartPositions = null;
         this.checkpoints = null;
+        this.timer = null;
 
-        this.timerId = -1;
-        this.timerCount = -1;
-        this.playersAlive = -1;
         this.teamScores = null;
-
+        this.teamLives = null;
         this.teamPlayerList = null;
+
         this.playerScores = null;
         this.playerOldScores = null;
         this.playerLives = null;
-        this.teamLives = null;
-
-        this.winCondition = WinCondition.NONE;
-        this.deathCondition = DeathCondition.NONE;
+        this.playerTimes = null;
+        this.playersAlive = -1;
 
         this.gameFolder = new File(Util.getSubPath(MikeyMinigames.data.gamesFolder, name));
         if (!this.gameFolder.exists()) this.gameFolder.mkdir();
     }
 
-    // TODO: javadoc
     public static String gameTypeToString(GameType type) {
         switch (type) {
-            case GROUP:
-                return "group";
-            case MULTIPLAYER:
-                return "multiplayer";
-            case TEAM:
-                return "team";
-            case SINGLEPLAYER:
-                return "singleplayer";
+            case SPLEEF:
+                return "spleef";
+            case BEDWARS:
+                return "bedwars";
+            case PARKOUR:
+                return "parkour";
         }
         return null;
     }
 
     public static GameType stringToGameType(String s) {
         switch (s) {
-            case "group":
-                return GameType.GROUP;
-            case "multiplayer":
-                return GameType.MULTIPLAYER;
-            case "team":
-                return GameType.TEAM;
-            case "singleplayer":
-                return GameType.SINGLEPLAYER;
-        }
-        return null;
-    }
-
-    public static String winConditionToString(WinCondition w) {
-        switch (w) {
-            case NONE:
-                return "none";
-            case LAST_ALIVE:
-                return "last_alive";
-            case LAST_TEAM_ALIVE:
-                return "last_team_alive";
-            case HIGHEST_SCORE:
-                return "highest_score";
-            case TIMER:
-                return "timer";
-            case ENDLESS:
-                return "endless";
-            case LAST_CHECKPOINT:
-                return "last_checkpoint";
-            case LAST_ROUND:
-                return "last_round";
-        }
-        return null;
-    }
-
-    public static WinCondition stringToWinCondition(String s) {
-        switch (s) {
-            case "none":
-                return WinCondition.NONE;
-            case "last_alive":
-                return WinCondition.LAST_ALIVE;
-            case "last_team_alive":
-                return WinCondition.LAST_TEAM_ALIVE;
-            case "highest_score":
-                return WinCondition.HIGHEST_SCORE;
-            case "timer":
-                return WinCondition.TIMER;
-            case "endless":
-                return WinCondition.ENDLESS;
-            case "last_checkpoint":
-                return WinCondition.LAST_CHECKPOINT;
-            case "last_round":
-                return WinCondition.LAST_ROUND;
-        }
-        return null;
-    }
-
-    public static String deathConditionToString(DeathCondition d) {
-        switch (d) {
-            case NONE:
-                return "none";
-            case FALLING:
-                return "falling";
-            case HEALTH:
-                return "health";
-        }
-        return null;
-    }
-
-    public static DeathCondition stringToDeathCondition(String s) {
-        switch (s) {
-            case "none":
-                return DeathCondition.NONE;
-            case "falling":
-                return DeathCondition.FALLING;
-            case "health":
-                return DeathCondition.HEALTH;
+            case "spleef":
+                return GameType.SPLEEF;
+            case "bedwars":
+                return GameType.BEDWARS;
+            case "parkour":
+                return GameType.PARKOUR;
         }
         return null;
     }

@@ -33,8 +33,8 @@ public class ToolInventory implements Listener {
 
         if (data.lobby != null) newInv[0] = Util.createInventoryItem(Material.RED_BED, 1,
                 "Set Lobby", "Click to set lobby position to current position");
-        if (data.startPos1 != null && data.startPos2 == null) newInv[1] = Util.createInventoryItem(Material.BRICK, 1,
-                "Set Spawn Position", "Click to set spawn position to current position");
+        if (data.startLoc != null) newInv[1] = Util.createInventoryItem(Material.BRICK, 1,
+                "Set Spawn Position", "Click to set start position to current position");
         if (data.startPos1 != null && data.startPos2 != null) newInv[2] = Util.createInventoryItem(Material.BRICK_SLAB, 1,
                 "Set Spawn Corners", "Left and right click to set the corners of the spawn platform");
         if (data.teamStartPositions != null) newInv[3] = Util.createInventoryItem(Material.RED_WOOL, 1,
@@ -62,6 +62,7 @@ public class ToolInventory implements Listener {
 
             // Don't let player pick up block and close the player's inventory
             e.setCancelled(true);
+            e.getWhoClicked().closeInventory();
 
             // Switch based on the item clicked
             switch (clickedItem.getType()) {
@@ -82,7 +83,7 @@ public class ToolInventory implements Listener {
                     toolMode = ToolMode.SPECTATOR;
                     break;
                 case BRICK:
-                    e.getWhoClicked().sendMessage(ChatColor.AQUA + "Click to set the spawn position");
+                    e.getWhoClicked().sendMessage(ChatColor.AQUA + "Click to set the start position");
                     toolMode = ToolMode.SPAWN_POSITION;
                     break;
                 case BRICK_SLAB:

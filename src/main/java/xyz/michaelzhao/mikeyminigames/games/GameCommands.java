@@ -21,11 +21,11 @@ public class GameCommands implements CommandExecutor {
                 case "add":
                     GameSetup.newGame(player, args);
                     break;
+                case "remove":
+                    GameSetup.removeGame(player, args);
+                    break;
                 case "list":
                     GameSetup.list(player, args);
-                    break;
-                case "options":
-                    GameSetup.optionsMenuCommand(player, args);
                     break;
                 case "tool":
                     GameSetup.giveTool(player, args);
@@ -58,7 +58,7 @@ public class GameCommands implements CommandExecutor {
                     GameEngine.info(player, args);
                     break;
                 case "join":
-                    GameEngine.joinGame(player, args);
+                    GameEngine.joinGameCommand(player, args);
                     break;
                 case "quit":
                     GameEngine.quit(player);

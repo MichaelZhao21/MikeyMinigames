@@ -1,5 +1,7 @@
 package xyz.michaelzhao.mikeyminigames;
 
+import com.sk89q.worldedit.math.BlockVector3;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import xyz.michaelzhao.mikeyminigames.games.GameData;
@@ -16,6 +18,7 @@ public class Data {
     public File gamesFolder;
     public HashMap<Player, String> playersInGameList;
     public HashMap<Player, OptionsInventory> optionsInventoryPlayerMap;
+    public HashMap<BlockVector3, String> startingPlates;
 
     public Data(World currWorld) {
         this.currWorld = currWorld;
@@ -24,5 +27,6 @@ public class Data {
         if (!this.gamesFolder.exists()) this.gamesFolder.mkdir();
         this.playersInGameList = new HashMap<>();
         this.optionsInventoryPlayerMap = new HashMap<>();
+        this.startingPlates = new HashMap<>();
     }
 }

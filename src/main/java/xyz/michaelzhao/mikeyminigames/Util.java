@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.StringTokenizer;
+import java.util.concurrent.TimeUnit;
 
 public class Util {
     /**
@@ -79,6 +80,21 @@ public class Util {
     }
 
     /**
+     * Recursively deletes a directory
+     * @param directoryToBeDeleted the directory to be deleted
+     * @return if the deletion was successful
+     */
+    public static boolean deleteDirectory(File directoryToBeDeleted) {
+        File[] allContents = directoryToBeDeleted.listFiles();
+        if (allContents != null) {
+            for (File file : allContents) {
+                deleteDirectory(file);
+            }
+        }
+        return directoryToBeDeleted.delete();
+    }
+
+    /**
      * Checks the length of the arguments and prints the message to the player if incorrect
      *
      * @param args          command arguments
@@ -110,6 +126,10 @@ public class Util {
         return false;
     }
 
+    public static BlockVector3 locationToBlockVector3(Location location) {
+        return BlockVector3.at(location.getX(), location.getY(), location.getZ());
+    }
+
     /**
      * Changes a Location object to a formatted string
      *
@@ -119,7 +139,12 @@ public class Util {
      */
     public static String locationToString(String label, Location l) {
         Vector v = l.getDirection();
-        return String.format("%s: (%d, %d, %d) | facing <%.2f, %.2f, %.2f>", label, (int) l.getX(), (int) l.getY(), (int) l.getZ(), l.getX(), l.getY(), l.getZ());
+        return String.format("%s: (%.2f, %.2f, %.2f) | facing <%.2f, %.2f, %.2f>", label, l.getX(), l.getY(), l.getZ(), l.getX(), l.getY(), l.getZ());
+    }
+
+    public static String locationToFloorString(String label, Location l) {
+        Vector v = l.getDirection();
+        return String.format("%s: (%f, %f, %f) | facing <%.2f, %.2f, %.2f>", label, Math.floor(l.getX()), Math.floor(l.getY()), Math.floor(l.getZ()), l.getX(), l.getY(), l.getZ());
     }
 
     public static String blockVector3ToString(String label, BlockVector3 b) {
@@ -129,14 +154,14 @@ public class Util {
     public static String stringBlockVector3hashToString(String label, HashMap<String, BlockVector3> map) {
         StringBuilder sb = new StringBuilder(label).append(":");
         for (String s : map.keySet())
-            sb.append("\n\t").append(blockVector3ToString(s, map.get(s)));
+            sb.append("\n    ").append(blockVector3ToString(s, map.get(s)));
         return sb.toString();
     }
 
     public static String stringLocationHashToString(String label, HashMap<String, Location> map) {
         StringBuilder sb = new StringBuilder(label).append(":");
         for (String s : map.keySet())
-            sb.append("\n\t").append(locationToString(s, map.get(s)));
+            sb.append("\n    ").append(locationToString(s, map.get(s)));
         return sb.toString();
     }
 
@@ -144,7 +169,7 @@ public class Util {
         StringBuilder sb = new StringBuilder();
         int count = 0;
         for (Location l : arr) {
-            sb.append("\n\t").append(locationToString(Integer.toString(count), l));
+            sb.append("\n    ").append(locationToString(Integer.toString(count), l));
             count++;
         }
         return String.format("%s:[%s]", label, sb.toString());
@@ -154,7 +179,7 @@ public class Util {
         StringBuilder sb = new StringBuilder();
         int count = 0;
         for (BlockVector3 b : arr) {
-            sb.append("\n\t").append(blockVector3ToString(Integer.toString(count), b));
+            sb.append("\n    ").append(blockVector3ToString(Integer.toString(count), b));
             count++;
         }
         return String.format("%s:%s", label, sb.toString());
@@ -171,10 +196,28 @@ public class Util {
         return String.format("%s:[%s]", label, sb.toString());
     }
 
+    public static String longArrayToString(String label, long[] arr) {
+        StringBuilder sb = new StringBuilder();
+        boolean first = true;
+        for (long i : arr) {
+            if (!first) sb.append(", ");
+            sb.append(i);
+            first = false;
+        }
+        return String.format("%s:[%s]", label, sb.toString());
+    }
+
     public static String stringIntArrayHashToString(String label, HashMap<String, int[]> map) {
         StringBuilder sb = new StringBuilder(label).append(":");
         for (String s : map.keySet())
-            sb.append("\n\t").append(intArrayToString(s, map.get(s)));
+            sb.append("\n    ").append(intArrayToString(s, map.get(s)));
+        return sb.toString();
+    }
+
+    public static String stringLongArrayHashToString(String label, HashMap<String, long[]> map) {
+        StringBuilder sb = new StringBuilder(label).append(":");
+        for (String s : map.keySet())
+            sb.append("\n    ").append(longArrayToString(s, map.get(s)));
         return sb.toString();
     }
 
@@ -383,5 +426,25 @@ public class Util {
             out.add(stringOutToBlockVector3(sb.toString()));
         }
         return out;
+    }
+
+    public static String formatTime(long millis) {
+        return String.format("%02d mins %02d secs",
+                TimeUnit.MILLISECONDS.toMinutes(millis),
+                TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
+    }
+
+    public static int findLocationInArrList(ArrayList<Location> arr, Location loc) {
+        for (int i = 0; i < arr.size(); i++) {
+            if (compLocations(arr.get(i), loc)) return i;
+        }
+        return -1;
+    }
+
+    public static boolean compLocations(Location loc1, Location loc2) {
+        return (Math.floor(loc1.getX()) == Math.floor(loc2.getX()) &&
+                Math.floor(loc1.getY()) == Math.floor(loc2.getY()) &&
+                Math.floor(loc1.getZ()) == Math.floor(loc2.getZ()));
+
     }
 }
