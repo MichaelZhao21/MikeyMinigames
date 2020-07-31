@@ -201,10 +201,10 @@ public class GameEngine {
             return;
         }
 
-        joinGame(player, args[1]);
+        joinGame(player, args[1], false);
     }
 
-    public static void joinGame(Player player, String gameName) {
+    public static void joinGame(Player player, String gameName, boolean pressurePlateStart) {
 
         // Get game data object
         GameData data = Util.getData(gameName);
@@ -240,7 +240,7 @@ public class GameEngine {
         giveKit(data.gameType, player);
 
         // Teleport player to start
-        if (!(data.gameType == GameType.PARKOUR && Util.compLocations(player.getLocation(), data.checkpoints.get(0))))
+        if (!pressurePlateStart)
             player.teleport(data.gameType == GameType.PARKOUR ? data.checkpoints.get(0) : data.lobby);
 
         // If the game hasn't begun, start it

@@ -1,6 +1,5 @@
 package xyz.michaelzhao.mikeyminigames.games;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -9,6 +8,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
@@ -72,7 +72,7 @@ public class GameListener implements Listener {
                 case OAK_DOOR:
                     String gameName = Util.getData(MikeyMinigames.data.playersInGameList.get(player)).name;
                     GameEngine.removeFromGame(player);
-                    GameEngine.joinGame(player, gameName);
+                    GameEngine.joinGame(player, gameName, false);
                     player.setVelocity(new Vector(0, 0, 0));
                     break;
                 case BARRIER:
@@ -135,7 +135,7 @@ public class GameListener implements Listener {
 
             // Check for start and start game
             if (MikeyMinigames.data.startingPlates.containsKey((Util.locationToBlockVector3(event.getClickedBlock().getLocation())))) {
-                GameEngine.joinGame(player, MikeyMinigames.data.startingPlates.get((Util.locationToBlockVector3(event.getClickedBlock().getLocation()))));
+                GameEngine.joinGame(player, MikeyMinigames.data.startingPlates.get((Util.locationToBlockVector3(event.getClickedBlock().getLocation()))), true);
                 return;
             }
         }
@@ -154,8 +154,22 @@ public class GameListener implements Listener {
     @EventHandler
     public void onPlayerFallEvent(PlayerMoveEvent e) {
         if (e.getTo() != null && e.getTo().getY() < 0 &&
-                MikeyMinigames.data.playersInGameList.containsKey(e.getPlayer()))
-            GameEngine.playerDeath(e.getPlayer(), MikeyMinigames.data.playersInGameList.get(e.getPlayer()));
+                MikeyMinigames.data.playersInGameList.containsKey(e.getPlayer())) {
+            GameData data = Util.getData(MikeyMinigames.data.playersInGameList.get(e.getPlayer()));
+            if (data.gameType == GameType.SPLEEF)
+                GameEngine.playerDeath(e.getPlayer(), MikeyMinigames.data.playersInGameList.get(e.getPlayer()));
+            else if (data.gameType == GameType.PARKOUR) {
+                e.getPlayer().teleport(data.checkpoints.get(data.playerLives.get(e.getPlayer().getName())));
+                e.getPlayer().setVelocity(new Vector(0, 0, 0));
+            }
+        }
+    }
+
+    @EventHandler
+    public void onPlayerDropItem(PlayerDropItemEvent e) {
+        if (MikeyMinigames.data.playersInGameList.containsKey(e.getPlayer()) &&
+                Util.getData(MikeyMinigames.data.playersInGameList.get(e.getPlayer())).gameType == GameType.PARKOUR)
+            e.setCancelled(true);
     }
 
     // TODO check for theow iyem

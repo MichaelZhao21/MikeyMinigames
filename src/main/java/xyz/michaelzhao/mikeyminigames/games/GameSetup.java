@@ -661,6 +661,8 @@ public class GameSetup {
     public static void loadGame(String gameName) {
         try {
             // Open file for reading
+            Bukkit.broadcastMessage(gameName);
+            Bukkit.broadcastMessage(Util.getFileInDir(new File(Util.getSubPath(MikeyMinigames.data.gamesFolder, gameName)), gameName + ".dat").getAbsolutePath());
             BufferedReader f = new BufferedReader(new FileReader(Util.getFileInDir(new File(Util.getSubPath(MikeyMinigames.data.gamesFolder, gameName)), gameName + ".dat")));
 
             // Load general data
